@@ -11,16 +11,27 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { LogOutIcon, SettingsIcon, UserIcon } from "./icons";
-
+import { useRouter } from "next/navigation";
+import { getUser } from "@/utils/auth";
 export function UserInfo() {
   const [isOpen, setIsOpen] = useState(false);
-
+    
   const USER = {
     name: "John Smith",
     email: "johnson@nextadmin.com",
     img: "/images/user/user-03.png",
   };
+  
+   const router = useRouter();
+  const user = getUser();
 
+  if (!user) return null;
+ 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    router.replace("/");
+  };
+    
   return (
     <Dropdown isOpen={isOpen} setIsOpen={setIsOpen}>
       <DropdownTrigger className="rounded align-middle outline-none ring-primary ring-offset-2 focus-visible:ring-1 dark:ring-offset-gray-dark">
@@ -76,7 +87,7 @@ export function UserInfo() {
         </figure>
 
         <hr className="border-[#E8E8E8] dark:border-dark-3" />
-
+  
         <div className="p-2 text-base text-[#4B5563] dark:text-dark-6 [&>*]:cursor-pointer">
           <Link
             href={"/profile"}
@@ -106,8 +117,9 @@ export function UserInfo() {
         <div className="p-2 text-base text-[#4B5563] dark:text-dark-6">
           <button
             className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[9px] hover:bg-gray-2 hover:text-dark dark:hover:bg-dark-3 dark:hover:text-white"
-            onClick={() => setIsOpen(false)}
+             onClick={handleLogout}
           >
+                
             <LogOutIcon />
 
             <span className="text-base font-medium">Log out</span>

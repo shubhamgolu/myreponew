@@ -8,7 +8,7 @@ interface CardSelectorProps {
     valid?: boolean;
     onChange: (event: { value: string }) => void;
 }
-
+  
 export const CardSelector = (props: CardSelectorProps) => {
     const { value, valid } = props;
     const [cardHover, setCardHover] = React.useState('');
@@ -62,7 +62,7 @@ export const CardSelector = (props: CardSelectorProps) => {
         visibility: 'hidden',
         position: 'absolute'
     };
-
+ 
     return (
         <FieldWrapper>
             <label className={`k-label${valid ? '' : ' k-text-error'}`}>Payment Type</label>

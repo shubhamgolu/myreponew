@@ -42,7 +42,7 @@ export const useUser = (initialData?: {
     });
     window.location.reload();
   };
-
+    
   return {
     user,
     errCode,

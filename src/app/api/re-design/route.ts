@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(request: NextRequest) {
   const body = await request.json();
+   const encoder = new TextEncoder();
+    const stream = new TransformStream();
+    const writer = stream.writable.getWriter();
   const { url } = body;
 
   if (!url) {

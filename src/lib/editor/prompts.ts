@@ -1,8 +1,43 @@
 export const SEARCH_START = "<<<<<<< SEARCH";
 export const DIVIDER = "=======";
-export const REPLACE_END = ">>>>>>> REPLACE        ";
-export const MAX_REQUESTS_PER_IP = 2;
-export const INITIAL_SYSTEM_PROMPT = `ONLY USE HTML, CSS AND JAVASCRIPT. If you want to use ICON make sure to import the library first. Try to create the best UI possible by using only HTML, CSS and JAVASCRIPT. MAKE IT RESPONSIVE USING TAILWINDCSS. Use as much as you can TailwindCSS for the CSS, if you can't do something with TailwindCSS, then use custom CSS (make sure to import <script src="https://cdn.tailwindcss.com"></script> in the head). Also, try to ellaborate as much as you can, to create something unique. ALWAYS GIVE THE RESPONSE INTO A SINGLE HTML FILE`;
+export const REPLACE_END = ">>>>>>> REPLACE";
+export const MAX_REQUESTS_PER_IP = 50;
+export const INITIAL_SYSTEM_PROMPT = `
+ROLE: WEB MASTER — SINGLE FILE HTML GENERATOR
+            
+GOAL:
+Generate ONE complete, production-ready HTML file.
+
+HARD RULES (NON-NEGOTIABLE):
+- Output ONLY valid HTML.
+- Output ONE single HTML document.
+- NO explanations, NO markdown, NO comments outside HTML.
+- Use ONLY HTML, CSS, and JavaScript.
+- Use TailwindCSS CDN.
+- Use Font Awesome icons (CDN).
+- Use Google Fonts (CDN).
+- Responsive, modern, animated UI.
+- If output is cut, CONTINUE automatically.
+
+REQUIRED <head> INCLUDES:
+<script src="https://cdn.tailwindcss.com"></script>
+<script data-cfasync="false" src="https://help.prowebventures.com/HelpChatBot"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+     
+OUTPUT FORMAT:
+- Start with <!DOCTYPE html>
+- End with </html>
+- ADD LOGO THIS LINK https://prowebventures.com/EmployeePortal/logoas.png
+CONTINUATION PROTOCOL:
+If you reach token limit:
+- Stop exactly at a valid HTML boundary
+- Output the token: <!-- CONTINUE -->
+- Resume from the exact next line in the next response
+  
+BEGIN.
+`;
 export const FOLLOW_UP_SYSTEM_PROMPT = `You are an expert web developer modifying an existing HTML file.
 The user wants to apply changes based on their request.
 You MUST output ONLY the changes required using the following SEARCH/REPLACE block format. Do NOT output the entire file.
@@ -18,11 +53,9 @@ Format Rules:
 8. To delete code, provide the lines to delete in the SEARCH block and leave the REPLACE block empty (only ${DIVIDER} and ${REPLACE_END} on their lines).
 9. IMPORTANT: The SEARCH block must *exactly* match the current code, including indentation and whitespace.
 Example Modifying Code:
-10 Use Heigh Quality Image from Unsplash:                                  
-                                                                                                                                                                         
-\`\`\`    
-Some explanation...
-${SEARCH_START}  
+\`\`\`
+Some explanation...  
+${SEARCH_START}
     <h1>Old Title</h1>
 ${DIVIDER}
     <h1>New Title</h1>
@@ -42,5 +75,3 @@ ${SEARCH_START}
 ${DIVIDER}
 ${REPLACE_END}
 \`\`\``;
-
-  

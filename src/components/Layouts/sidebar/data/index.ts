@@ -12,13 +12,13 @@ export const NAV_DATA = [
       },
       {
         title: "Create Site",
-        url: "/calendar",
+        url: "/create-site",
         icon: Icons.Calendar,
         items: [],
       },
       {
-        title: "Profile",
-        url: "/profile",
+        title: "Site List",
+        url: "/tables",
         icon: Icons.User,
         items: [],
       },

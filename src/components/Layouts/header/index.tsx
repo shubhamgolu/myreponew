@@ -8,10 +8,33 @@ import { MenuIcon } from "./icons";
 import { Notification } from "./notification";
 import { ThemeToggleSwitch } from "./theme-toggle";
 import { UserInfo } from "./user-info";
+import { getUser } from "@/utils/auth";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export function Header() {
   const { toggleSidebar, isMobile } = useSidebarContext();
+  // const router = useRouter();
 
+  // // 🔥 undefined = checking, null = not logged in
+  // const [user, setUser] = useState<any | undefined>(undefined);
+
+  // useEffect(() => {
+  //   const storedUser = getUser();
+
+  //   if (!storedUser) {
+  //     router.replace("/");
+  //     setUser(null);
+  //     return;
+  //   }
+
+  //   setUser(storedUser);
+  // }, [router]);
+
+  // 🚨 BLOCK render until auth resolved
+  // if (user === undefined) return null;
+  // if (user === null) return null;
+    
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between border-b border-stroke bg-white px-4 py-5 shadow-1 dark:border-stroke-dark dark:bg-gray-dark md:px-5 2xl:px-10">
       <button
@@ -29,7 +52,6 @@ export function Header() {
             width={32}
             height={32}
             alt=""
-            role="presentation"
           />
         </Link>
       )}
@@ -46,16 +68,13 @@ export function Header() {
           <input
             type="search"
             placeholder="Search"
-            className="flex w-full items-center gap-3.5 rounded-full border bg-gray-2 py-3 pl-[53px] pr-5 outline-none transition-colors focus-visible:border-primary dark:border-dark-3 dark:bg-dark-2 dark:hover:border-dark-4 dark:hover:bg-dark-3 dark:hover:text-dark-6 dark:focus-visible:border-primary"
+            className="flex w-full items-center gap-3.5 rounded-full border bg-gray-2 py-3 pl-[53px] pr-5 outline-none transition-colors focus-visible:border-primary dark:border-dark-3 dark:bg-dark-2"
           />
-
-          <SearchIcon className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 max-[1015px]:size-5" />
+          <SearchIcon className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2" />
         </div>
 
         <ThemeToggleSwitch />
-
         <Notification />
-
         <div className="shrink-0">
           <UserInfo />
         </div>

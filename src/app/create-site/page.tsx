@@ -4,6 +4,7 @@ import { useState } from "react";
 import FormWizard from "react-form-wizard-component";
 import "react-form-wizard-component/dist/style.css";
 import { Select } from "@/components/FormElements/select"; 
+import { AppEditor } from "@/components/editor/editor";
 // import { CameraIcon } from "@/components/Icons/camera-icon";
 
 /**
@@ -224,7 +225,7 @@ const handleChange = (e: any) => {
           icon="ti-settings"
         >
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3">
                <Select
                             label="Select Country"
                             items={[
@@ -235,7 +236,7 @@ const handleChange = (e: any) => {
                            
                           />
             </div>
-             <div className="flex flex-col gap-4">
+             <div className="flex flex-col gap-3">
               <label className="block text-sm font-medium">Enter Domain Name</label>
               <input
                 value={domainname}
@@ -247,7 +248,7 @@ const handleChange = (e: any) => {
                 }`}
               />
             </div>
-             <div className="flex flex-col gap-4">
+             <div className="flex flex-col gap-3">
               <label className="text-sm font-medium">Enter Paypel Id<span className="text-red-500">*</span></label>
               <input
                 value={paypelid}
@@ -259,28 +260,31 @@ const handleChange = (e: any) => {
                 }`}
               />
             </div>
-             <div className="flex flex-col gap-4">
-               <label
-                                 htmlFor="profilePhoto"
-                                 className="absolute bottom-0 right-0 flex size-8.5 cursor-pointer items-center justify-center rounded-full bg-primary text-white hover:bg-opacity-90 sm:bottom-2 sm:right-2"
-                               >
-                                 {/* <CameraIcon /> */}
-                        
-                                 <input
-                                   type="file"
-                                   name="profilePhoto"
-                                   id="profilePhoto"
-                                   className="sr-only"
-                                   onChange={handleChange}
-                                   accept="image/png, image/jpg, image/jpeg"
-                                 />
-                               </label>
-            </div>                 
+            <div className="flex flex-col gap-3">
+                        <label
+                          htmlFor="cover"
+                          className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-[15px] py-[5px] text-body-sm font-medium text-white hover:bg-opacity-90"
+                        >
+                          <input
+                            type="file"
+                            name="coverPhoto"
+                            id="coverPhoto"
+                            className="sr-only"
+                            onChange={handleChange}
+                            accept="image/png, image/jpg, image/jpeg"
+                          />
+            
+                          {/* <CameraIcon /> */}
+            
+                          <span>Edit</span>
+                        </label>
+                      </div>        
           </div>
         </FormWizard.TabContent>
 
         {/* STEP 3 - review & submit onComplete is called when user finishes */}
         <FormWizard.TabContent title="Review & Submit" icon="ti-check">
+         
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Review your details</h3>
 
@@ -298,6 +302,7 @@ const handleChange = (e: any) => {
 
             {submitting && <div className="text-sm">Submitting…</div>}
           </div>
+          
         </FormWizard.TabContent>
       </FormWizard>                        
 

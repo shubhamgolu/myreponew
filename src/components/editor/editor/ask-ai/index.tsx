@@ -20,7 +20,7 @@ import { TooltipContent } from "@radix-ui/react-tooltip";
 import { SelectedHtmlElement } from "./selected-html-element";
 import { FollowUpTooltip } from "./follow-up-tooltip";
 import { isTheSameHtml } from "@/lib/editor/compare-html-diff";
-               
+
 export function AskAI({
   html,
   setHtml,
@@ -49,7 +49,7 @@ export function AskAI({
 }) {
   const refThink = useRef<HTMLDivElement | null>(null);
   const audio = useRef<HTMLAudioElement | null>(null);
-     
+
   const [prompt, setPrompt] = useState("");
   const [hasAsked, setHasAsked] = useState(false);
   const [previousPrompt, setPreviousPrompt] = useState("");
@@ -61,11 +61,11 @@ export function AskAI({
   const [isThinking, setIsThinking] = useState(true);
   const [controller, setController] = useState<AbortController | null>(null);
   const [isFollowUp, setIsFollowUp] = useState(true);
-  
+
   const getModel = () =>
   typeof window !== "undefined"
-    ? localStorage.getItem("openai_model") || "gpt-4o-mini"
-    : "gpt-4o-mini";
+    ? localStorage.getItem("openai_model") || "deepseek-chat"
+    : "deepseek-chat";
 
   const callAi = async (redesignMarkdown?: string) => {
     if (isAiWorking) return;
@@ -91,9 +91,8 @@ export function AskAI({
         const apiKey = localStorage.getItem("openai_api_key");
         const baseUrl = localStorage.getItem("openai_base_url");
         const model = getModel();
-        const request = await fetch("/editor/api/ask-ai", {
+        const request = await fetch("/api/ask-ai", {
           method: "PUT",
-           
           body: JSON.stringify({
             prompt,
             provider,
@@ -123,12 +122,12 @@ export function AskAI({
           setisAiWorking(false);
           onSuccess(res.html, prompt, res.updatedLines);
           if (audio.current) audio.current.play();
-        }    
+        }
       } else {
         const apiKey = localStorage.getItem("openai_api_key");
         const baseUrl = localStorage.getItem("openai_base_url");
         const model = getModel();
-        const request = await fetch("/editor/api/ask-ai", {
+        const request = await fetch("/api/ask-ai", {
           method: "POST",
           body: JSON.stringify({
             prompt,
@@ -144,7 +143,7 @@ export function AskAI({
             "x-forwarded-for": window.location.hostname,
           },
           signal: abortController.signal,
-        }); 
+        });
         if (request && request.body) {
           if (!request.ok) {
             let errorMsg = "AI request failed.";
@@ -161,7 +160,7 @@ export function AskAI({
             toast.error(errorMsg);
             setisAiWorking(false);
             return;
-          }  
+          }
           const reader = request.body.getReader();
           const decoder = new TextDecoder("utf-8");
           const selectedModel = MODELS.find(
@@ -180,14 +179,14 @@ export function AskAI({
                 setisAiWorking(false);
                 return;
               }
-  
+
               toast.success("AI responded successfully");
               setPreviousPrompt(prompt);
               setPrompt("");
               setisAiWorking(false);
               setHasAsked(true);
               if (audio.current) audio.current.play();
-  
+
               // Now we have the complete HTML including </html>, so set it to be sure
               const finalDoc = contentResponse.match(
                 /<!DOCTYPE html>[\s\S]*<\/html>/
@@ -213,7 +212,7 @@ export function AskAI({
                 return read();
               }
             }
- 
+
             contentResponse += chunk;
 
             const newHtml = contentResponse.match(
@@ -237,7 +236,7 @@ export function AskAI({
               if (!partialDoc.includes("</html>")) {
                 partialDoc += "\n</html>";
               }
-   
+
               // Throttle the re-renders to avoid flashing/flicker
               const now = Date.now();
               if (now - lastRenderTime > 300) {
@@ -260,7 +259,7 @@ export function AskAI({
       toast.error(error.message);
     }
   };
-   
+
   const stopController = () => {
     if (controller) {
       controller.abort();
@@ -283,7 +282,7 @@ export function AskAI({
       setOpenThink(false);
     }
   }, [isThinking]);
-    
+
   const isSameHtml = useMemo(() => {
     return isTheSameHtml(html);
   }, [html]);
@@ -370,7 +369,7 @@ export function AskAI({
                 : hasAsked
                 ? "Ask DeepSite for edits"
                 : "Ask DeepSite anything..."
-            } 
+            }
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             onKeyDown={(e) => {
@@ -429,9 +428,9 @@ export function AskAI({
               size="iconXs"
               disabled={isAiWorking || !prompt.trim()}
               onClick={() => callAi()}
-            > 
+            >
               <ArrowUp className="size-4" />
-            </Button> 
+            </Button>
           </div>
         </div>
         {!isSameHtml && (
@@ -460,5 +459,3 @@ export function AskAI({
     </div>
   );
 }
-
-    

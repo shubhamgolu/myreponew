@@ -1,21 +1,15 @@
-const express = require("express");
-const next = require("next");
+const { createServer } = require('http');
+const next = require('next');
 
-
-const port = process.env.PORT || 3001;
-const dev = false;
-
-const app = next({ dev });
+const app = next({ dev: false });
 const handle = app.getRequestHandler();
+const port = process.env.PORT || 3000;
 
 app.prepare().then(() => {
-  const server = express();
-
-  server.all("*", (req, res) => {
-    return handle(req, res);
-  });
-  
-  server.listen(port, () => {
-    console.log("Next.js running on port " + port);
+  createServer((req, res) => {
+    handle(req, res);
+  }).listen(port, (err) => {
+    if (err) throw err;
+    console.log(`> Ready on http://localhost:${port}`);
   });
 });

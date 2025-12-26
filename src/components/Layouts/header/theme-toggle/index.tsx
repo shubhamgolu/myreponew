@@ -13,7 +13,7 @@ const THEMES = [
     Icon: Moon,
   },
 ];
-
+    
 export function ThemeToggleSwitch() {
   const { setTheme, theme } = useTheme();
   const [mounted, setMounted] = useState(false);

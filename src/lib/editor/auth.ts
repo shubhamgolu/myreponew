@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 // UserResponse = type User & { token: string };
 type UserResponse = User & { token: string };
-
+  
 export const isAuthenticated = async (): Promise<UserResponse | NextResponse<unknown> | undefined> => {
   // Mock user for now, as Hugging Face authentication is removed
   const user: User = {

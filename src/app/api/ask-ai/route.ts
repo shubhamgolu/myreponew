@@ -16,8 +16,8 @@ export async function POST(request: NextRequest) {
   const { prompt, model, redesignMarkdown, html, apiKey, baseUrl } = body;
 
   const openai = new OpenAI({
-    apiKey: apiKey || process.env.OPENAI_API_KEY || "",
-    baseURL: baseUrl || process.env.OPENAI_BASE_URL,
+    apiKey: apiKey || process.env.DEEPSEEK_API_KEY || "",
+    baseURL: baseUrl || process.env.DEEPSEEK_BASE_URL,
   });
 
   if (!model || (!prompt && !redesignMarkdown)) {
@@ -46,6 +46,8 @@ export async function POST(request: NextRequest) {
         const chatCompletion = await openai.chat.completions.create({
           model,
           stream: true,
+          max_tokens: Number(process.env.DEEPSEEK_MAX_TOKENS ?? 4096),
+          temperature: Number(process.env.DEEPSEEK_TEMPERATURE ?? 0.8),
           messages: [
             { role: "system", content: INITIAL_SYSTEM_PROMPT },
             {
@@ -57,15 +59,42 @@ export async function POST(request: NextRequest) {
                 : prompt,
             },
           ],
+          
         });
 
         for await (const chunk of chatCompletion) {
-          const content = chunk.choices[0]?.delta?.content || "";
-          if (!content) continue;
-          completeResponse += content;
-          await writer.write(encoder.encode(content));
-        }
-                                              
+  const content = chunk.choices[0]?.delta?.content || "";
+  if (!content) continue;
+  completeResponse += content;
+  await writer.write(encoder.encode(content));
+}
+
+// 🔁 AUTO-CONTINUE IF CUT
+if (completeResponse.includes("<!-- CONTINUE -->")) {
+  const followUp = await openai.chat.completions.create({
+    model: "deepseek-chat",
+    stream: true,
+    max_tokens: Number(process.env.DEEPSEEK_MAX_TOKENS ?? 4096),
+    temperature: 0.25,
+    messages: [
+      { role: "system", content: INITIAL_SYSTEM_PROMPT },
+      { role: "assistant", content: completeResponse },
+      {
+        role: "user",
+        content:
+          "Continue from exactly where you stopped. Do NOT repeat any HTML.",
+      },
+    ],
+  });
+
+  for await (const chunk of followUp) {
+    const content = chunk.choices[0]?.delta?.content || "";
+    if (!content) continue;
+    await writer.write(encoder.encode(content));
+  }
+}
+
+        return response;
         if (!completeResponse.trim()) {
           await writer.write(
             encoder.encode("\n[ERROR] Model returned empty response.\n")
@@ -86,7 +115,7 @@ export async function POST(request: NextRequest) {
         await writer.close();
       }
     })();
-         
+
     return response;
   } catch (error: any) {
     return NextResponse.json(
@@ -113,8 +142,8 @@ export async function PUT(request: NextRequest) {
   } = body;
 
   const openai = new OpenAI({
-    apiKey: apiKey || process.env.OPENAI_API_KEY || "",
-    baseURL: baseUrl || process.env.OPENAI_BASE_URL,
+    apiKey: apiKey || process.env.DEEPSEEK_API_KEY || "",
+    baseURL: baseUrl || process.env.DEEPSEEK_BASE_URL,
   });
 
   if (!prompt || !html) {
@@ -179,7 +208,7 @@ export async function PUT(request: NextRequest) {
         moreBlocks = false;
         continue;
       }
-    
+
       const searchBlock = chunk.substring(
         searchStartIndex + SEARCH_START.length,
         dividerIndex
@@ -187,8 +216,8 @@ export async function PUT(request: NextRequest) {
       const replaceBlock = chunk.substring(
         dividerIndex + DIVIDER.length,
         replaceEndIndex
-      );     
-                               
+      );
+
       if (searchBlock.trim() === "") {
         newHtml = `${replaceBlock}\n${newHtml}`;
         updatedLines.push([1, replaceBlock.split("\n").length]);
