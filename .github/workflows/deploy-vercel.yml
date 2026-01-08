@@ -1,0 +1,52 @@
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # 1. Checkout code
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    
+    # 2. Setup Node.js
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    # 3. Install dependencies
+    - name: Install dependencies
+      run: npm ci
+    
+    # 4. Run linting (optional)
+    - name: Run ESLint
+      run: npm run lint || true
+    
+    # 5. Run tests (optional)
+    - name: Run tests
+      run: npm test || true
+    
+    # 6. Build Next.js application
+    - name: Build Next.js app
+      run: npm run build
+      env:
+        NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+    
+    # 7. Deploy to Vercel (only on main branch)
+    - name: Deploy to Vercel
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        vercel-args: '--prod'  # Deploy to production
