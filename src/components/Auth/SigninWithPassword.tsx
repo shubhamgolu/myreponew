@@ -72,7 +72,7 @@ export default function SigninWithPassword() {
         type="text"
         label="Email"
         className="mb-4 [&_input]:py-[15px]"
-        placeholder="Enter your email"
+        placeholder="Enter your email with us"
         name="email"
         handleChange={handleChange}
         value={data.email}
