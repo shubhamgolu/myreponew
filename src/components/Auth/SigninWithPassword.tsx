@@ -83,26 +83,14 @@ export default function SigninWithPassword() {
         type="password"
         label="Password"
         className="mb-5 [&_input]:py-[15px]"
-        placeholder="Enter your password"
+        placeholder="Enter your password is"
         name="password"
         handleChange={handleChange}
         value={data.password}
         icon={<PasswordIcon />}
       />
 
-
-      <InputGroup
-        type="checkbox"
-        label="check"
-        className="mb-5 [&_input]:py-[15px]"
-        placeholder="Enter your password"
-        name="check box"
-        handleChange={handleChange}
-        value={data.password}
-        icon={<PasswordIcon />}
-      />
-
-      {/* <div className="mb-6 flex items-center justify-between gap-2 py-2 font-medium">
+      <div className="mb-6 flex items-center justify-between gap-2 py-2 font-medium">
         <Checkbox
           label="Remember me"
           name="remember"
@@ -123,7 +111,7 @@ export default function SigninWithPassword() {
         >
           Forgot Password?
         </Link>
-      </div> */}
+      </div>
 
       <div className="mb-4.5">
         <button
